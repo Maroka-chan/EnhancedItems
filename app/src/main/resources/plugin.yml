@@ -1,0 +1,8 @@
+name: AutoSmelt
+version: ${project.version}
+main: EnhancedItems.App
+api-version: 1.16
+authors: [ Maroka_chan ]
+commands:
+  giveitem:
+    description: Spawns a custom item for the given player, or to the executor if none is specified.

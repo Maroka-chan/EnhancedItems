@@ -1,0 +1,20 @@
+{
+  "ITEM": {
+    "name": "Second Tool",
+    "material": "GOLDEN_PICKAXE",
+    "lore": [],
+    "attributes": {
+      "AUTO_SMELT": ["DEBRIS"]
+    },
+    "ingredients": {
+      "F": "FURNACE",
+      "D": "GOLD_INGOT",
+      "S": "STICK"
+    },
+    "recipe": [
+      "DFD",
+      " S ",
+      " S "
+    ]
+  }
+}

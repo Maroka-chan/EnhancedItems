@@ -1,0 +1,20 @@
+{
+  "ITEM": {
+    "name": "Smelting Pickaxe",
+    "material": "DIAMOND_PICKAXE",
+    "lore": [],
+    "attributes": {
+      "AUTO_SMELT": ["GOLD_ORE"]
+    },
+    "ingredients": {
+      "F": "FURNACE",
+      "D": "DIAMOND",
+      "S": "STICK"
+    },
+    "recipe": [
+      "DFD",
+      " S ",
+      " S "
+    ]
+  }
+}
