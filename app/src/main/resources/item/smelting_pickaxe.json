@@ -4,7 +4,7 @@
     "material": "DIAMOND_PICKAXE",
     "lore": [],
     "attributes": {
-      "AUTO_SMELT": ["GOLD_ORE"]
+      "AUTO_SMELT": ["ORE","DEBRIS","!GOLD_ORE"]
     },
     "ingredients": {
       "F": "FURNACE",

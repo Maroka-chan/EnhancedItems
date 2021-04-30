@@ -9,15 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.List;
-
 public final class AutoSmelt implements Attribute {
-    private static final List<String> whitelist = Arrays.asList(
-            "ORE",
-            "DEBRIS"
-    );
-
     private AutoSmelt(){}
 
     public static void trigger(Event e, String[] args) {
@@ -45,23 +37,22 @@ public final class AutoSmelt implements Attribute {
         }
         if(!dropped) return;
 
-        String blockName = block.name().toUpperCase();
-        for (String s : args)
-            if(blockName.matches(String.format("(.*)%s(.*)$", s))) {
-                world.dropItem(blockState.getLocation(), blockDrop);
-                return;
-            }
-
         boolean whitelisted = false;
-        for (String s : whitelist)
-            if(blockName.matches(String.format("(.*)%s(.*)$", s))){
+        boolean blacklisted = false;
+        String blockName = block.name().toUpperCase();
+        for (String s : args){
+            boolean blackList = s.charAt(0) == '!';
+            boolean match = blockName.matches(String.format("(.*)%s(.*)$", blackList ? s.substring(1) : s));
+            if(!blackList && match)
                 whitelisted = true;
-                break;
-            }
-        if(!whitelisted) {
+            else if (blackList && match)
+                blacklisted = true;
+        }
+        if(!whitelisted || blacklisted){
             world.dropItem(blockState.getLocation(), blockDrop);
             return;
         }
+
         ItemStack item = ItemUtils.getSmeltingResult(block);
         if(item == null) {
             world.dropItem(blockState.getLocation(), blockDrop);
