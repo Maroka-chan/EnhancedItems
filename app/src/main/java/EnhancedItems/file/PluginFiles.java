@@ -11,33 +11,41 @@ import java.util.zip.ZipInputStream;
 public final class PluginFiles {
     private PluginFiles(){}
 
-    private static File dataFolder = App.getPlugin().getDataFolder();
-    private static ZipInputStream zip;
+    private static final File dataFolder = App.getPlugin().getDataFolder();
+    private static final String itemPath = dataFolder + "/item/";
 
     public static void init(){
-        try{
-            zip = new ZipInputStream(PluginFiles.class.getProtectionDomain().getCodeSource().getLocation().openStream());
+        try (ZipInputStream inputStream = new ZipInputStream(PluginFiles.class.getProtectionDomain().getCodeSource().getLocation().openStream())){
             createDirs();
+            createItemFiles(inputStream);
         }catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static File[] getItemFiles(){
-        File itemDir = new File(App.getPlugin().getDataFolder() + "/item/");
+        File itemDir = new File(itemPath);
         File[] items;
         if(!itemDir.isDirectory() || (items = itemDir.listFiles()) == null)
             return null;
         return items;
     }
 
-    private static void createItemFiles() throws IOException {
+    public static File getItemFile(String fileName){
+        return new File(itemPath + fileName + ".json");
+    }
+
+    private static void createDirs() throws IOException {
+        Files.createDirectories(Paths.get(itemPath));
+    }
+
+    private static void createItemFiles(ZipInputStream inputStream) throws IOException {
         ZipEntry entry;
         String entryPath;
         File targetFile;
         OutputStream outputStream;
 
-        while(( entry = zip.getNextEntry() ) != null){
+        while(( entry = inputStream.getNextEntry() ) != null){
             entryPath = String.format("/%s", entry.getName());
             targetFile = new File(dataFolder + entryPath);
             if(targetFile.isFile()) continue;
@@ -52,9 +60,5 @@ public final class PluginFiles {
                 outputStream.write(buffer);
             }
         }
-    }
-
-    private static void createDirs() throws IOException {
-        Files.createDirectories(Paths.get(dataFolder + "/item/"));
     }
 }
