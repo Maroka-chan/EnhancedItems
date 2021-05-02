@@ -3,6 +3,7 @@ package EnhancedItems.parser;
 import EnhancedItems.attribute.Attribute;
 import EnhancedItems.util.Convert;
 import com.google.gson.JsonSyntaxException;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -37,11 +38,15 @@ public final class ItemParser {
             itemstack = new ItemStack(Material.valueOf((String)itemSection.get("material")));
             ItemMeta meta = itemstack.getItemMeta();
             String itemName = ((String) itemSection.get("name")).trim();
-            meta.setDisplayName(itemName);
+            meta.displayName(Component.empty().content(itemName));
 
             JSONArray lore = (JSONArray)itemSection.get("lore");
             List<String> loreList = new ArrayList<>(lore);
-            meta.setLore(loreList);
+
+            List<Component> loreComponents = Component.empty().children();
+            for (String s : loreList)
+                loreComponents.add(Component.empty().content(s));
+            meta.lore(loreComponents);
 
             Map<String,JSONArray> attributesJson = (Map<String,JSONArray>) itemSection.get("attributes");
             Map<String,String[]> attributes = new HashMap<>();
