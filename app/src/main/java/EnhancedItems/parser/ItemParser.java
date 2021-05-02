@@ -22,6 +22,8 @@ import java.util.*;
 import java.util.logging.Level;
 
 public final class ItemParser {
+
+    @SuppressWarnings("unchecked")
     public static ItemStack parseItem(String item){
         ItemStack itemstack = null;
         String filename = item.toLowerCase();
@@ -41,7 +43,7 @@ public final class ItemParser {
             meta.displayName(Component.empty().content(itemName));
 
             JSONArray lore = (JSONArray)itemSection.get("lore");
-            List<String> loreList = new ArrayList<>(lore);
+            List<String> loreList = new ArrayList<String>(lore);
 
             List<Component> loreComponents = Component.empty().children();
             for (String s : loreList)
@@ -52,8 +54,8 @@ public final class ItemParser {
             Map<String,String[]> attributes = new HashMap<>();
 
             for (String key : attributesJson.keySet()){
-                List<String> attributeList = new ArrayList<>(attributesJson.get(key));
-                attributes.put(key, attributeList.toArray(new String[attributeList.size()]));
+                List<String> attributeList = new ArrayList<String>(attributesJson.get(key));
+                attributes.put(key, attributeList.toArray(new String[0]));
             }
 
             PersistentDataContainer dataContainer = meta.getPersistentDataContainer();
