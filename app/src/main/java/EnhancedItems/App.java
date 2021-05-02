@@ -9,6 +9,7 @@ import EnhancedItems.parser.ItemParser;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
@@ -35,7 +36,9 @@ public class App extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockDropItemListener(), this);
 
         registerItemRecipes();
-        getCommand("giveitem").setExecutor(new GiveItem());
+
+        PluginCommand giveItemCommand = getCommand("giveitem");
+        if(giveItemCommand != null) giveItemCommand.setExecutor(new GiveItem());
     }
 
     private void registerItemRecipes(){
