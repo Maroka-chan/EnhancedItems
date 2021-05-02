@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
@@ -17,8 +18,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,46 +35,80 @@ public class App extends JavaPlugin {
         plugin = this;
         getServer().getPluginManager().registerEvents(new BlockDropItemListener(), this);
 
+        createItemFiles();
         registerItemRecipes();
 
         PluginCommand giveItemCommand = getCommand("giveitem");
         if(giveItemCommand != null) giveItemCommand.setExecutor(new GiveItem());
     }
 
-    private void registerItemRecipes(){
+    private void createItemFiles(){
+        File dataFolder = this.getDataFolder();
+        new File(dataFolder + "/item/").mkdirs();
+
         try (ZipInputStream zip = new ZipInputStream(App.class.getProtectionDomain().getCodeSource().getLocation().openStream())){
             ZipEntry entry;
             while(( entry = zip.getNextEntry() ) != null){
-                String entryName = entry.getName();
-                if(entryName.startsWith("item/") &&  entryName.endsWith(".json")) {
-                    Object jsonObject = new JSONParser().parse(new InputStreamReader(App.class.getResourceAsStream(String.format("/%s", entryName))));
-                    JSONObject itemJson = (JSONObject) jsonObject;
+                String entryPath = String.format("/%s", entry.getName());
+                File targetFile = new File(dataFolder + entryPath);
+                if(targetFile.isFile()) continue;
 
-                    Map itemSection = (Map) itemJson.get("ITEM");
-                    if(itemSection == null) continue;
+                if(entryPath.startsWith("/item/") &&  entryPath.endsWith(".json")) {
+                    InputStream initialStream = App.class.getResourceAsStream(entryPath);
+                    if(initialStream == null) continue;
+                    byte[] buffer = new byte[initialStream.available()];
+                    if(initialStream.read(buffer) < 1) continue;
 
-                    Map<String, String> ingredients = (Map) itemSection.get("ingredients");
-                    JSONArray recipe = (JSONArray) itemSection.get("recipe");
-
-                    String itemName = ((String) itemSection.get("name")).trim()
-                            .toLowerCase().replaceAll("\\s", "_");
-                    if (ingredients != null && recipe != null) {
-                        ShapedRecipe shapedRecipe = new ShapedRecipe(
-                                new NamespacedKey(App.getPlugin(), itemName)
-                                , ItemParser.parseItem(itemName)
-                        );
-
-                        List<String> recipeLine = new ArrayList<>(recipe);
-                        shapedRecipe.shape(recipeLine.toArray(new String[recipeLine.size()]));
-
-                        for (String key : ingredients.keySet())
-                            shapedRecipe.setIngredient(key.charAt(0), Material.valueOf(ingredients.get(key)));
-
-                        Bukkit.addRecipe(shapedRecipe);
-                    }
+                    OutputStream outputStream = new FileOutputStream(targetFile);
+                    outputStream.write(buffer);
                 }
             }
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void registerItemRecipes(){
+        File itemDir = new File(this.getDataFolder() + "/item/");
+        File[] items;
+        if(!itemDir.isDirectory() || (items = itemDir.listFiles()) == null)
+            return;
+
+        try {
+            for (File itemFile : items) {
+                Object jsonObject = new JSONParser().parse(new FileReader(itemFile));
+                JSONObject itemJson = (JSONObject) jsonObject;
+
+                Map itemSection = (Map) itemJson.get("ITEM");
+                if (itemSection == null) continue;
+
+                Map<String, String> ingredients = (Map) itemSection.get("ingredients");
+                JSONArray recipe = (JSONArray) itemSection.get("recipe");
+
+                String itemName = ((String) itemSection.get("name")).trim()
+                        .toLowerCase().replaceAll("\\s", "_");
+
+                ItemStack item = ItemParser.parseItem(itemName);
+                if(item == null) continue;
+
+                if (ingredients != null && recipe != null) {
+                    ShapedRecipe shapedRecipe = new ShapedRecipe(
+                            new NamespacedKey(App.getPlugin(), itemName)
+                            , item
+                    );
+
+                    List<String> recipeLine = new ArrayList<String>(recipe);
+                    shapedRecipe.shape(recipeLine.toArray(new String[0]));
+
+                    for (String key : ingredients.keySet())
+                        shapedRecipe.setIngredient(key.charAt(0), Material.valueOf(ingredients.get(key)));
+
+                    Bukkit.addRecipe(shapedRecipe);
+                    System.out.println("bruh");
+                }
+            }
+        }catch (IOException | ParseException e){
             e.printStackTrace();
         }
     }
