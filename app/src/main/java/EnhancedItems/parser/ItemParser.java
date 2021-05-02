@@ -1,6 +1,7 @@
 package EnhancedItems.parser;
 
 import EnhancedItems.attribute.Attribute;
+import EnhancedItems.file.PluginFiles;
 import EnhancedItems.util.Convert;
 import com.google.gson.JsonSyntaxException;
 import net.kyori.adventure.text.Component;
@@ -15,9 +16,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -27,11 +26,11 @@ public final class ItemParser {
     public static ItemStack parseItem(String item){
         ItemStack itemstack = null;
         String filename = item.toLowerCase();
-        InputStream inputStream = ItemParser.class.getResourceAsStream(String.format("/item/%s.json", filename));
-        if(inputStream == null) return null;
+        File itemFile = PluginFiles.getItemFile(filename);
+        if(!itemFile.isFile()) return null;
 
         try{
-            Object jsonObject = new JSONParser().parse(new InputStreamReader(inputStream));
+            Object jsonObject = new JSONParser().parse(new InputStreamReader(new FileInputStream(itemFile)));
             JSONObject itemJson = (JSONObject) jsonObject;
 
             Map<String,?> itemSection = (Map<String,?>) itemJson.get("ITEM");
