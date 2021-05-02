@@ -4,6 +4,7 @@
 package EnhancedItems;
 
 import EnhancedItems.command.GiveItem;
+import EnhancedItems.file.PluginFiles;
 import EnhancedItems.listener.BlockDropItemListener;
 import EnhancedItems.parser.ItemParser;
 import org.bukkit.Bukkit;
@@ -22,8 +23,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class App extends JavaPlugin {
     private static JavaPlugin plugin;
@@ -35,45 +34,16 @@ public class App extends JavaPlugin {
         plugin = this;
         getServer().getPluginManager().registerEvents(new BlockDropItemListener(), this);
 
-        createItemFiles();
+        PluginFiles.init();
         registerItemRecipes();
 
         PluginCommand giveItemCommand = getCommand("giveitem");
         if(giveItemCommand != null) giveItemCommand.setExecutor(new GiveItem());
     }
 
-    private void createItemFiles(){
-        File dataFolder = this.getDataFolder();
-        new File(dataFolder + "/item/").mkdirs();
-
-        try (ZipInputStream zip = new ZipInputStream(App.class.getProtectionDomain().getCodeSource().getLocation().openStream())){
-            ZipEntry entry;
-            while(( entry = zip.getNextEntry() ) != null){
-                String entryPath = String.format("/%s", entry.getName());
-                File targetFile = new File(dataFolder + entryPath);
-                if(targetFile.isFile()) continue;
-
-                if(entryPath.startsWith("/item/") &&  entryPath.endsWith(".json")) {
-                    InputStream initialStream = App.class.getResourceAsStream(entryPath);
-                    if(initialStream == null) continue;
-                    byte[] buffer = new byte[initialStream.available()];
-                    if(initialStream.read(buffer) < 1) continue;
-
-                    OutputStream outputStream = new FileOutputStream(targetFile);
-                    outputStream.write(buffer);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @SuppressWarnings("unchecked")
     private void registerItemRecipes(){
-        File itemDir = new File(this.getDataFolder() + "/item/");
-        File[] items;
-        if(!itemDir.isDirectory() || (items = itemDir.listFiles()) == null)
-            return;
+        File[] items = PluginFiles.getItemFiles();
 
         try {
             for (File itemFile : items) {
@@ -105,7 +75,6 @@ public class App extends JavaPlugin {
                         shapedRecipe.setIngredient(key.charAt(0), Material.valueOf(ingredients.get(key)));
 
                     Bukkit.addRecipe(shapedRecipe);
-                    System.out.println("bruh");
                 }
             }
         }catch (IOException | ParseException e){
