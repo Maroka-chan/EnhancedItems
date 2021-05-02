@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class App extends JavaPlugin {
     private static JavaPlugin plugin;
@@ -37,8 +38,11 @@ public class App extends JavaPlugin {
         PluginFiles.init();
         registerItemRecipes();
 
-        PluginCommand giveItemCommand = getCommand("giveitem");
+        String giveItem = "giveitem";
+        PluginCommand giveItemCommand = getCommand(giveItem);
         if(giveItemCommand != null) giveItemCommand.setExecutor(new GiveItem());
+        else Bukkit.getLogger().log(Level.WARNING
+                , String.format("The command %s wasn't found. Check your plugin.yml", giveItem));
     }
 
     @SuppressWarnings("unchecked")
