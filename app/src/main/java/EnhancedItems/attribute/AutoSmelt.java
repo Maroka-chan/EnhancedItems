@@ -58,6 +58,6 @@ public final class AutoSmelt implements Attribute {
             world.dropItem(blockState.getLocation(), blockDrop);
             return;
         }
-        player.getInventory().addItem(item);
+        world.dropItem(blockState.getLocation(), item);
     }
 }
