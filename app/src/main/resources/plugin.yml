@@ -1,4 +1,4 @@
-name: AutoSmelt
+name: EnhancedItems
 version: ${project.version}
 main: EnhancedItems.App
 api-version: 1.16
