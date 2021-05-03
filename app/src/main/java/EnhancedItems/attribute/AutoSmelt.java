@@ -40,9 +40,10 @@ public final class AutoSmelt implements Attribute {
         boolean whitelisted = false;
         boolean blacklisted = false;
         String blockName = block.name().toUpperCase();
+        boolean blackList, match;
         for (String s : args){
-            boolean blackList = s.charAt(0) == '!';
-            boolean match = blockName.matches(String.format("(.*)%s(.*)$", blackList ? s.substring(1) : s));
+            blackList = s.charAt(0) == '!';
+            match = blockName.matches(String.format("(.*)%s(.*)$", blackList ? s.substring(1) : s));
             if(!blackList && match)
                 whitelisted = true;
             else if (blackList && match)
@@ -53,7 +54,7 @@ public final class AutoSmelt implements Attribute {
             return;
         }
 
-        ItemStack item = ItemUtils.getSmeltingResult(block);
+        ItemStack item = ItemUtils.getSmeltingResult(blockDrop.getType());
         if(item == null) {
             world.dropItem(blockState.getLocation(), blockDrop);
             return;
