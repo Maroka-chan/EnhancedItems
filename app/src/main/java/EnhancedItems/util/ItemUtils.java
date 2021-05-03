@@ -32,6 +32,7 @@ public final class ItemUtils {
             if(recipe.getInput().getType() != item) continue;
             result = recipe.getResult();
             recipeMap.put(item, result);
+            furnaceRecipes.remove(recipe);
             return result;
         }
         return null;
