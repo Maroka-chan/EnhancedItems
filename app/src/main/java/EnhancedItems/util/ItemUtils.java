@@ -6,14 +6,13 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public final class ItemUtils {
     private ItemUtils(){}
 
     private final static List<FurnaceRecipe> furnaceRecipes = new ArrayList<>();
+    private final static Map<Material, ItemStack> recipeMap = new HashMap<>();
 
     static {
         Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
@@ -26,9 +25,14 @@ public final class ItemUtils {
     }
 
     public static ItemStack getSmeltingResult(Material item){
+        ItemStack result = recipeMap.get(item);
+        if(result != null) return result;
+
         for (FurnaceRecipe recipe : furnaceRecipes) {
             if(recipe.getInput().getType() != item) continue;
-            return recipe.getResult();
+            result = recipe.getResult();
+            recipeMap.put(item, result);
+            return result;
         }
         return null;
     }
