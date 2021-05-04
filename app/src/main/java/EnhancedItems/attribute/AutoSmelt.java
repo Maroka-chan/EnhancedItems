@@ -21,7 +21,6 @@ public final class AutoSmelt {
 
         event.setCancelled(true);
         BlockState blockState = event.getBlockState();
-        World world = blockState.getWorld();
 
         Material block = blockState.getType();
         ItemStack blockDrop = null;
@@ -33,7 +32,7 @@ public final class AutoSmelt {
                 dropped = true;
                 break;
             }
-            world.dropItem(item.getLocation(), droppedItem);
+            dropItemAtCenter(item.getLocation(), droppedItem);
         }
         if(!dropped) return;
 
@@ -50,15 +49,19 @@ public final class AutoSmelt {
                 blacklisted = true;
         }
         if(!whitelisted || blacklisted){
-            world.dropItem(blockState.getLocation(), blockDrop);
+            dropItemAtCenter(blockState.getLocation(), blockDrop);
             return;
         }
 
         ItemStack item = ItemUtils.getSmeltingResult(blockDrop.getType());
         if(item == null) {
-            world.dropItem(blockState.getLocation(), blockDrop);
+            dropItemAtCenter(blockState.getLocation(), blockDrop);
             return;
         }
-        world.dropItem(blockState.getLocation(), item);
+        dropItemAtCenter(blockState.getLocation(), item);
+    }
+
+    private static void dropItemAtCenter(Location location, ItemStack item){
+        location.getWorld().dropItem(location.add(.5, .5, .5),item);
     }
 }
