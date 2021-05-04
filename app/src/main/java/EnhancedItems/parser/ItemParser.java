@@ -44,7 +44,7 @@ public final class ItemParser {
             JSONArray lore = (JSONArray)itemSection.get("lore");
             List<String> loreList = new ArrayList<String>(lore);
 
-            List<Component> loreComponents = Component.empty().children();
+            List<Component> loreComponents = new ArrayList<>();
             for (String s : loreList)
                 loreComponents.add(Component.empty().content(s));
             meta.lore(loreComponents);
