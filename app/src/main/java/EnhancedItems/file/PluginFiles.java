@@ -27,7 +27,7 @@ public final class PluginFiles {
         File itemDir = new File(itemPath);
         File[] items;
         if(!itemDir.isDirectory() || (items = itemDir.listFiles()) == null)
-            return null;
+            return new File[0];
         return items;
     }
 
