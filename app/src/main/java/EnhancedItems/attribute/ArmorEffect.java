@@ -26,12 +26,12 @@ public final class ArmorEffect {
         int effectAmplifier;
         PotionEffectType potionEffectType;
         for (String s : args){
-            potionEffect = s.split("\\s*:\\s*");
+            potionEffect = s.split("\s*:\s*");
             potionEffectType = PotionEffectType.getByName(potionEffect[0]);
             if(potionEffectType == null) continue;
             effectAmplifier = Integer.parseInt(potionEffect[1]);
             player.addPotionEffect(
-                    new PotionEffect(potionEffectType, -1, effectAmplifier, false, false)
+                    new PotionEffect(potionEffectType, Integer.MAX_VALUE, effectAmplifier, false, false)
             );
         }
     }
