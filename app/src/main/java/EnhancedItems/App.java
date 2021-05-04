@@ -6,6 +6,7 @@ package EnhancedItems;
 import EnhancedItems.command.GiveItem;
 import EnhancedItems.file.PluginFiles;
 import EnhancedItems.listener.BlockDropItemListener;
+import EnhancedItems.listener.PlayerArmorChangeListener;
 import EnhancedItems.parser.ItemParser;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -13,6 +14,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,7 +35,9 @@ public class App extends JavaPlugin {
     @Override
     public void onEnable(){
         plugin = this;
-        getServer().getPluginManager().registerEvents(new BlockDropItemListener(), this);
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(new BlockDropItemListener(), this);
+        pluginManager.registerEvents(new PlayerArmorChangeListener(), this);
 
         PluginFiles.init();
         registerItemRecipes();
@@ -45,7 +49,7 @@ public class App extends JavaPlugin {
                 , String.format("The command %s wasn't found. Check your plugin.yml", giveItem));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void registerItemRecipes(){
         File[] items = PluginFiles.getItemFiles();
 

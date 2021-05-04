@@ -18,6 +18,7 @@ public final class Attribute {
 
     static {
         attributeMethods.put("AUTO_SMELT", AutoSmelt::trigger);
+        attributeMethods.put("ARMOR_EFFECT", ArmorEffect::trigger);
     }
 
     public static void invoke(String attribute, Event event, String[] args) {
