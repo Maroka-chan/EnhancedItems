@@ -18,10 +18,6 @@ public final class ArmorEffect {
         if(player.getGameMode() == GameMode.CREATIVE)
             return;
 
-        removeArmorEffects(event.getPlayer(), ItemUtils.getItemAttributeMap(
-                event.getOldItem()).keySet().toArray(new String[0])
-        );
-
         String[] potionEffect;
         int effectAmplifier;
         PotionEffectType potionEffectType;
@@ -33,15 +29,6 @@ public final class ArmorEffect {
             player.addPotionEffect(
                     new PotionEffect(potionEffectType, Integer.MAX_VALUE, effectAmplifier, false, false)
             );
-        }
-    }
-
-    private static void removeArmorEffects(Player player, String[] potionEffects){
-        PotionEffectType potionEffectType;
-        for(String s : potionEffects){
-            potionEffectType = PotionEffectType.getByName(s);
-            if(potionEffectType == null) continue;
-            player.removePotionEffect(potionEffectType);
         }
     }
 }
