@@ -1,10 +1,12 @@
 package EnhancedItems.util;
 
+import EnhancedItems.attribute.Attribute;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -29,5 +31,16 @@ public final class ItemUtils {
 
     public static ItemStack getSmeltingResult(Material item){
         return recipeMap.get(item);
+    }
+
+    private static String getItemAttributes(ItemStack item){
+        return (item != null) ? item.getItemMeta()
+                .getPersistentDataContainer().get(Attribute.namespacedKey, PersistentDataType.STRING)
+                : null;
+    }
+
+    public static Map<String, String[]> getItemAttributeMap(ItemStack item){
+        String attributes = getItemAttributes(item);
+        return (attributes != null) ? Convert.stringToMap(attributes) : new HashMap<>();
     }
 }
