@@ -1,7 +1,6 @@
 package EnhancedItems.listener;
 
 import EnhancedItems.attribute.Attribute;
-import EnhancedItems.attribute.AttributeMethod;
 import EnhancedItems.util.Convert;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,16 +16,13 @@ public class BlockDropItemListener implements Listener {
         ItemMeta itemMeta = e.getPlayer().getInventory().getItemInMainHand()
                 .getItemMeta();
         if(itemMeta == null) return;
-        try {
-            String attributes =
-                    itemMeta.getPersistentDataContainer().get(Attribute.namespacedKey, PersistentDataType.STRING);
-            if(attributes == null) return;
 
-            Map<String, String[]> attributeMap = Convert.stringToMap(attributes);
-            for (String attribute : attributeMap.keySet())
-                ((AttributeMethod)Attribute.class.getField(attribute).get(null)).trigger(e, attributeMap.get(attribute));
+        String attributes =
+                itemMeta.getPersistentDataContainer().get(Attribute.namespacedKey, PersistentDataType.STRING);
+        if(attributes == null) return;
 
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
-        }
+        Map<String, String[]> attributeMap = Convert.stringToMap(attributes);
+        for (String attribute : attributeMap.keySet())
+            Attribute.invoke(attribute, e, attributeMap.get(attribute));
     }
 }

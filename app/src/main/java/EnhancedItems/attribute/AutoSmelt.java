@@ -9,7 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class AutoSmelt implements Attribute {
+public final class AutoSmelt {
     private AutoSmelt(){}
 
     public static void trigger(Event e, String[] args) {
