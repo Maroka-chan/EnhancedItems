@@ -11,9 +11,9 @@ public final class Convert {
         Iterator<String> iterator = map.keySet().iterator();
         for (int i = 0; i < map.size(); i++){
             String key = iterator.next();
-            mapString.append(key + ":[");
+            mapString.append(key).append(":[");
             for (String s : map.get(key))
-                mapString.append(s + ",");
+                mapString.append(s).append(",");
 
             if(mapString.charAt(mapString.length()-1) == ',')
                 mapString.deleteCharAt(mapString.length()-1);
@@ -26,7 +26,7 @@ public final class Convert {
         Map<String,String[]> map = new HashMap<>();
         String[] pairs = mapString.split("\n");
         for (String pair : pairs){
-            String[] KV = pair.split(":");
+            String[] KV = pair.split(":", 2);
             String[] args = KV[1].substring(1, KV[1].length()-1).split(",");
             map.put(KV[0], args);
         }
