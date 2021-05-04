@@ -34,7 +34,7 @@ public final class ItemUtils {
     }
 
     private static String getItemAttributes(ItemStack item){
-        return (item != null) ? item.getItemMeta()
+        return (item != null && item.hasItemMeta()) ? item.getItemMeta()
                 .getPersistentDataContainer().get(Attribute.namespacedKey, PersistentDataType.STRING)
                 : null;
     }
