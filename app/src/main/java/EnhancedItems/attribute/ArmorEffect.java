@@ -5,6 +5,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public final class ArmorEffect {
@@ -20,6 +21,19 @@ public final class ArmorEffect {
         removeArmorEffects(event.getPlayer(), ItemUtils.getItemAttributeMap(
                 event.getOldItem()).keySet().toArray(new String[0])
         );
+
+        String[] potionEffect;
+        int effectAmplifier;
+        PotionEffectType potionEffectType;
+        for (String s : args){
+            potionEffect = s.split("\\s*:\\s*");
+            potionEffectType = PotionEffectType.getByName(potionEffect[0]);
+            if(potionEffectType == null) continue;
+            effectAmplifier = Integer.parseInt(potionEffect[1]);
+            player.addPotionEffect(
+                    new PotionEffect(potionEffectType, -1, effectAmplifier, false, false)
+            );
+        }
     }
 
     private static void removeArmorEffects(Player player, String[] potionEffects){
